@@ -1,23 +1,34 @@
 import React, { useEffect } from 'react';
-import { addToCart, removeFromCart } from '../actions/cartActions';
+//import { addToCart, removeFromCart } from '../actions/cartActions';
 import {useDispatch, useSelector} from 'react-redux';
 import {Link} from 'react-router-dom';
-import CheckoutSteps from '../components/CheckoutSteps';
-import { createOrder, detailsOrder } from '../actions/orderActions';
+//import CheckoutSteps from '../components/CheckoutSteps';
+import { detailsOrder, payOrder} from '../actions/orderActions';
+import PaypalButton from '../components/PaypalButton';
 
 function OrderScreen(props){
+
+    const orderPay = useSelector(state => state.orderPay);
+    const {loading: loadingPay, success: successPay, error: errorPay} = orderPay;
     const dispatch = useDispatch();
     useEffect(()=> {
+        if(successPay){
+            props.history.push("/profile");
+        } else{
         dispatch(detailsOrder(props.match.params.id));
-        return ()=>{
-        
+    }
+        return ()=>{  
         };
-    }, []);
+    }, [successPay]);
+
+    const handleSuccessPayment = (paymentResult) => {
+        dispatch(payOrder(order, paymentResult));
+    }
 
     const orderDetails = useSelector(state => state.orderDetails);
     const {loading, order, error} = orderDetails;
-    const payHandler = () => { };
-    console.log(orderDetails)
+    //const payHandler = () => { };
+    //console.log(orderDetails)
 
 
     return loading ?<div>Loading...</div>: error ? <div> {error}</div> :
@@ -29,8 +40,13 @@ function OrderScreen(props){
                      Shipping
                  </h3>
                  <div>
-                     {order.shipping.address}, {order.shipping.city}
-                     {order.shipping.postalCode}, {order.shipping.country},
+                     {order.shipping.address}
+                 </div>
+                 <div>
+                 {order.shipping.city}, {' '} {order.shipping.state}, {' '} {order.shipping.postalCode}
+                 </div>
+                 <div>
+                 {order.shipping.country}
                  </div>
                  <div>
                      {order.isDelivered? "Delivered to " +  order.deliveredAt : "Not Delivered."}
@@ -60,7 +76,7 @@ function OrderScreen(props){
                         </div>
                         :
                         order.orderItems.map(item=>
-                            <li>
+                            <li key={item._id}>
                             <div className="cart-image">
                                 <img src={item.image} alt = "product"></img>
                                 </div>
@@ -75,7 +91,10 @@ function OrderScreen(props){
                                     </div>
                                 </div>
                                 <div className="cart-price">
-                                    ${item.price}
+                                {new Intl.NumberFormat("en-GB", {
+                            style: "currency",
+                            currency: "USD"
+                        }).format(item.price)}
                                 </div>
                              </li>
                         )
@@ -85,27 +104,51 @@ function OrderScreen(props){
          </div>
          <div className="placeorder-action">
              <ul>
-                 <li>
-                     <button className="button primary full-width" onClick={payHandler}>Pay Now</button>
+                 <li className="placeorder-actions-payment">
+                     {loadingPay && <div>Finishing Payment...</div>}
+                     {!order.isPaid &&
+                     <PaypalButton 
+                     amount={order.totalPrice} 
+                     onSuccess={handleSuccessPayment}/>
+                     }
                  </li>
                  <li>
                      <h3>Order Summary</h3>
                  </li>
                  <li>
                      <div>Items</div>
-                    <div>${order.itemsPrice}</div>
+                     <div>
+                    {new Intl.NumberFormat("en-GB", {
+                            style: "currency",
+                            currency: "USD"
+                        }).format(order.itemsPrice)}
+                    </div>
                  </li>
                  <li>
                      <div>Shipping</div>
-                    <div>${order.shippingPrice}</div>
+                    <div>
+                    {new Intl.NumberFormat("en-GB", {
+                            style: "currency",
+                            currency: "USD"
+                        }).format(order.shippingPrice)}
+                    </div>
                  </li>
                  <li>
                      <div>Tax</div>
-                    <div>${order.taxPrice}</div>
+                    <div>
+                        {new Intl.NumberFormat("en-GB", {
+                            style: "currency",
+                            currency: "USD"
+                        }).format(order.taxPrice)}</div>
                  </li>
                  <li>
                      <div>Order Total</div>
-                    <div>${order.totalPrice}</div>
+                     <div>
+                    {new Intl.NumberFormat("en-GB", {
+                            style: "currency",
+                            currency: "USD"
+                        }).format(order.totalPrice)}
+                    </div>
                  </li>
              </ul>
          </div>
