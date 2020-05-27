@@ -62,7 +62,10 @@ function CartScreen(props){
                                     </div>
                                 </div>
                                 <div className="cart-price">
-                                    ${item.price}
+                                {new Intl.NumberFormat("en-GB", {
+                            style: "currency",
+                            currency: "USD"
+                        }).format(item.price)}
                                 </div>
                              </li>
                         )
@@ -73,7 +76,10 @@ function CartScreen(props){
                     <h3>
                         Subtotal ({cartItems.reduce((a,c) => a + c.qty, 0)} items)
                     :
-                    $ {cartItems.reduce((a,c)=> a + c.price * c.qty, 0)}
+                    {new Intl.NumberFormat("en-GB", {
+                            style: "currency",
+                            currency: "USD"
+                        }).format(cartItems.reduce((a,c)=> a + c.price * c.qty, 0))}
                     </h3>
                     <button onClick={checkoutHandler} className="button primary full-width" disabled={cartItems.length===0}>Proceed To Checkout
                     </button>
