@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
-import {useSelector, useDispatch} from 'react-redux';
-import {Link} from 'react-router-dom';
+import React, { useState } from 'react';
+import {useDispatch} from 'react-redux';
+//import {Link} from 'react-router-dom';
 import {saveShipping} from '../actions/cartActions';
 import CheckoutSteps from '../components/CheckoutSteps';
 
@@ -8,6 +8,7 @@ function ShippingScreen(props){
 
     const[address, setAddress] = useState('');
     const[city, setCity] = useState('');
+    const[state, setState] = useState('');
     const[postalCode, setPostalCode] = useState('');
     const[country, setCountry] = useState('');
 
@@ -15,7 +16,7 @@ function ShippingScreen(props){
 
     const submitHandler = (e) => {
         e.preventDefault();
-        dispatch(saveShipping({address, city, postalCode, country}));
+        dispatch(saveShipping({address, city, state, postalCode, country}));
         props.history.push ('payment')
     }
 
@@ -39,6 +40,13 @@ function ShippingScreen(props){
                         City
                     </label>  
                     <input type="text" name="city" id="city" onChange={(e) => setCity(e.target.value)}>
+                    </input>
+                </li>
+                <li>
+                    <label htmlFor="state">
+                        State
+                    </label>  
+                    <input type="text" name="state" id="state" onChange={(e) => setState(e.target.value)}>
                     </input>
                 </li>
                 <li>
