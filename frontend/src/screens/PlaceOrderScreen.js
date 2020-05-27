@@ -52,8 +52,13 @@ function PlaceOrderScreen(props){
                      Shipping
                  </h3>
                  <div>
-                     {cart.shipping.address}, {cart.shipping.city}
-                     {cart.shipping.postalCode}, {cart.shipping.country},
+                     {cart.shipping.address}
+                 </div>
+                 <div>
+                    {cart.shipping.city}, {''}{cart.shipping.postalCode}
+                 </div>
+                 <div>
+                    {cart.shipping.country}
                  </div>
              </div>
              <div>
@@ -92,7 +97,10 @@ function PlaceOrderScreen(props){
                                     </div>
                                 </div>
                                 <div className="cart-price">
-                                    ${item.price}
+                                {new Intl.NumberFormat("en-GB", {
+                            style: "currency",
+                            currency: "USD"
+                        }).format(item.price)}
                                 </div>
                              </li>
                         )
@@ -110,19 +118,31 @@ function PlaceOrderScreen(props){
                  </li>
                  <li>
                      <div>Items</div>
-                    <div>${itemsPrice}</div>
+                    <div>{new Intl.NumberFormat("en-GB", {
+                            style: "currency",
+                            currency: "USD"
+                        }).format(itemsPrice)}</div>
                  </li>
                  <li>
                      <div>Shipping</div>
-                    <div>${shippingPrice}</div>
+                    <div>{new Intl.NumberFormat("en-GB", {
+                            style: "currency",
+                            currency: "USD"
+                        }).format(shippingPrice)}</div>
                  </li>
                  <li>
                      <div>Tax</div>
-                    <div>${taxPrice}</div>
+                    <div>{new Intl.NumberFormat("en-GB", {
+                            style: "currency",
+                            currency: "USD"
+                        }).format(taxPrice)}</div>
                  </li>
                  <li>
                      <div>Order Total</div>
-                    <div>${totalPrice}</div>
+                    <div>{new Intl.NumberFormat("en-GB", {
+                            style: "currency",
+                            currency: "USD"
+                        }).format(totalPrice)}</div>
                  </li>
              </ul>
          </div>
