@@ -1,167 +1,88 @@
 import React, { useEffect, useState } from 'react';
+import {Link} from 'react-router-dom';
 import {useSelector, useDispatch} from 'react-redux';
-import { saveProduct, listProducts, deleteProduct } from '../actions/productActions';
+import {detailsProduct} from '../actions/productActions';
 
-function ProductsScreen(props){
-    const [modalVisible, setModalVisible] = useState(false);
-    const [id, setId] = useState('');
-    const[name, setName] = useState('');
-    const[price, setPrice] = useState('');
-    const[image, setImage] = useState('');
-    const[brand, setBrand] = useState('');
-    const[category, setCategory] = useState('');
-    const[countInStock, setCountInStock] = useState('');
-    const[description, setDescription] = useState('');
-    const productList = useSelector(state => state.productList);
-    const {loading, products, error} = productList;
-
-    const productSave = useSelector(state => state.productSave);
-    const { loading: loadingSave, success: successSave, error: errorSave} = productSave;
-
-    const productDelete = useSelector(state => state.productDelete);
-    const { loading: loadingDelete, success: successDelete, error: errorDelete} = productDelete;
+function ProductScreen(props){
+    const [qty, setQty] = useState(1);
+    const productDetails = useSelector(state => state.productDetails);
+    const {product, loading, error} = productDetails;
     const dispatch = useDispatch();
 
     useEffect(() => {
-        if(successSave){
-            setModalVisible(false);
-        }
-        dispatch(listProducts());
+        dispatch(detailsProduct(props.match.params.id));
         return () =>{
             //
         };
-    }, [successSave, successDelete]);
+    }, []);
 
-    const openModal = (product) => {
-        setModalVisible(true);
-        setId(product._id);
-        setName(product.name);
-        setPrice(product.price);
-        setDescription(product.description);
-        setImage(product.image);
-        setBrand(product.brand);
-        setCategory(product.category);
-        setCountInStock(product.countInStock);
+    const handleAddToCart = () => {
+        props.history.push("/cart/" + props.match.params.id + "?qty=" + qty);
     }
-    const submitHandler = (e) => {
-        e.preventDefault();
-        dispatch(saveProduct({
-            _id: id,
-            name, price, image, brand, category, 
-            countInStock, description
-        }));
-    }
-    const deleteHandler = (product) =>{
-        dispatch(deleteProduct(product._id));
-    }
-    return <div className="content content-margined">
 
-        <div className="product-header">
-            <h3>Products</h3>
-            <button className="button primary" onClick = {()=>openModal({})}>Create Product</button>
-        </div> 
-    {modalVisible &&
-    <div className="form">
-        <form onSubmit={submitHandler}>
-            <ul className="form-container">
-                <li>
-                    <h2>Create Product</h2>
-                </li>
-                <li>
-                    {loadingSave && <div>Loading...</div>}
-                    {errorSave && <div>{errorSave}</div>}
-                </li>
-
-                <li>
-                    <label htmlFor="name">
-                        Product Name
-                    </label>  
-                    <input type="text" name="name" id="name" value={name} onChange={(e) => setName(e.target.value)}>
-                    </input>
-                </li>
-                <li>
-                    <label htmlFor="price">
-                        Price
-                    </label>  
-                    <input type="text" name="price" id="price" value={price} onChange={(e) => setPrice(e.target.value)}>
-                    </input>
-                </li>   
-                <li>
-                    <label htmlFor="image">
-                        Image
-                    </label>  
-                    <input type="text" name="image" id="image" value={image} onChange={(e) => setImage(e.target.value)}>
-                    </input>
-                </li>          
-                  <li>
-                    <label htmlFor="brand">
-                        Brand
-                    </label>  
-                    <input type="text" name="brand" id="brand" value={brand} onChange={(e) => setBrand(e.target.value)}>
-                    </input>
-                </li>               
-                <li>
-                    <label htmlFor="category">
-                        Category
-                    </label>  
-                    <input type="text" name="category" id="category" value={category} onChange={(e) => setCategory(e.target.value)}>
-                    </input>
-                </li>  
-                <li>
-                    <label htmlFor="countInStock">
-                        Count In Stock
-                    </label>  
-                    <input type="text" name="countInStock" id="countInStock" value={countInStock} onChange={(e) => setCountInStock(e.target.value)}>
-                    </input>
-                </li>                  
-                 <li>
-                    <label htmlFor="description">
-                        Description
-                    </label>  
-                    <textarea name="description" id="description" value={description} onChange={(e) => setDescription(e.target.value)}></textarea>
-                </li>                           
-                <li>
-                    <button type="submit" className="button primary">{id?"Update":"Create Product"}</button>
-                </li>
-                <li>
-                    <button type="button" onClick={()=>setModalVisible(false)} className="button secondary">Back</button>
-                </li>                
-            </ul>
-        </form>
-    </div>
-}
-
-
-    <div className="product-list">
-
-            <table className="table">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Name</th>
-                        <th>Price</th>
-                        <th>Category</th>
-                        <th>Brand</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {products.map(product =>(<tr key={product._id}>
-                        <td>{product._id}</td>
-                        <td>{product.name}</td>
-                        <td>${product.price}</td>
-                        <td>{product.category}</td>
-                        <td>{product.brand}</td>
-                        <td>
-                            <button className="button" onClick={() => openModal(product)}>Edit</button>
-                            {'  '}
-                            <button className="button" onClick={() => deleteHandler(product)}>Delete</button>
-                        </td>
-                     </tr>))}
-                </tbody>
-            </table>
-
+    return <div>
+        <div className="back-to-result">
+            <Link to="/">Back to result</Link>
         </div>
+{loading ? <div>Loading...</div>:
+error?<div>{error}</div>:
+(
+    <div className="details">
+    <div className="details-image">
+    <img src={product.image} alt="product"></img>
     </div>
+    <div className="details-info">
+        <ul>
+            <li>
+                <h4>{product.name}</h4>
+            </li>
+            <li>
+                {product.rating} Stars ({product.numReviews} Reviews)
+            </li>
+            <li>
+                Price: <b>{new Intl.NumberFormat("en-GB", {
+                            style: "currency",
+                            currency: "USD"
+                        }).format(product.price)}</b>
+            </li>
+            <li>
+                Description:
+                <div>
+                    {product.description}
+                </div>
+            </li>
+        </ul>
+    </div>
+    <div className="details-action">
+        <ul>
+            <li>
+                Price: {new Intl.NumberFormat("en-GB", {
+                            style: "currency",
+                            currency: "USD"
+                        }).format(product.price)}
+            </li>
+            <li>
+                Status: {product.countInStock >0? "In Stock": "Unavailable."}
+            </li>
+            <li>
+                Qty: <select value ={qty} onChange={(e) => {setQty(e.target.value)}}>
+                    {[...Array(product.countInStock).keys()].map(x=>
+                        <option key={x+1} value={x+1}>{x+1}</option> 
+                        )}
+                </select>
+            </li>
+            <li>
+                {product.countInStock > 0 && 
+                <button onClick={handleAddToCart} className="button primary"> Add to Cart</button>}
+            </li>
+        </ul>
+    </div>
+</div>
+)
+
 }
-export default ProductsScreen;
+
+       
+  </div>
+}
+export default ProductScreen;
