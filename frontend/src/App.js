@@ -12,6 +12,8 @@ import { useSelector } from 'react-redux';
 import PaymentScreen from './screens/PaymentScreen';
 import PlaceOrderScreen from './screens/PlaceOrderScreen';
 import OrderScreen from './screens/OrderScreen';
+import OrdersScreen from './screens/OrdersScreen';
+import ProfileScreen from './screens/ProfileScreen';
 
 function App() {
 
@@ -37,11 +39,22 @@ function App() {
            <Link to="/">Cape May Brewery Online Ordering</Link>
         </div>
         <div className="header-links">
-            <a href="cart.html">Cart</a>
+            <Link to="/cart/:id?">Cart</Link>
             {
               userInfo ? <Link to="/profile">{userInfo.name}</Link>:
               <Link to="/signin">Sign In</Link>
             }
+            {userInfo && userInfo.isAdmin && (
+              <div className="dropdown">
+              <a href="#" >Admin</a>
+              <ul className="dropdown-content">
+                <li>
+                <Link to ="/orders">Orders</Link>
+                <Link to ="/products">Products</Link>
+                </li>
+              </ul>
+              </div>
+            )}
         </div>
     </header>
     <aside className="sidebar">
@@ -49,15 +62,17 @@ function App() {
         <button className="sidebar-close-button" onClick={closeMenu}>x</button>
         <ul className="categories">
             <li>
-                <a href="index.html">IPAs</a>
+                <Link to="/category/IPA">IPAs</Link>
             </li>
             <li>
-                <a href="index.html">Stout</a>
+                <Link to="/category/Stout">Stout</Link>
             </li>
         </ul>
     </aside> 
     <main className="main">
         <div className="content">
+          <Route path ="/orders" component={OrdersScreen}/>
+          <Route path ="/profile" component={ProfileScreen}/>
           <Route path ="/order/:id" component={OrderScreen}/>
           <Route path ="/products" component={ProductsScreen}/>
           <Route path ="/shipping" component={ShippingScreen}/>
@@ -67,6 +82,7 @@ function App() {
           <Route path ="/register" component={RegisterScreen}/>
           <Route path ="/product/:id" component={ProductScreen}/>
           <Route path ="/cart/:id?" component={CartScreen}/>
+          <Route path ="/category/:id" component={HomeScreen}/>
           <Route path ="/" exact={true} component={HomeScreen}/>
         
         </div>
