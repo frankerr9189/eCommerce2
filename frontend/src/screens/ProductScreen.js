@@ -40,7 +40,10 @@ error?<div>{error}</div>:
                 {product.rating} Stars ({product.numReviews} Reviews)
             </li>
             <li>
-                Price: <b>${product.price}</b>
+                Price: <b>{new Intl.NumberFormat("en-GB", {
+                            style: "currency",
+                            currency: "USD"
+                        }).format(product.price)}</b>
             </li>
             <li>
                 Description:
@@ -53,7 +56,10 @@ error?<div>{error}</div>:
     <div className="details-action">
         <ul>
             <li>
-                Price: ${product.price}
+                Price: {new Intl.NumberFormat("en-GB", {
+                            style: "currency",
+                            currency: "USD"
+                        }).format(product.price)}
             </li>
             <li>
                 Status: {product.countInStock >0? "In Stock": "Unavailable."}
