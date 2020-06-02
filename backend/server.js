@@ -26,8 +26,6 @@ app.get("/api/config/paypal", (req, res)=>{
 app.use(express.static(path.join(__dirname, '/../frontend/build')));
 app.get('*', (req, res) => {
   res.sendFile(path.join(`${__dirname}/../frontend/build/index.html`));
-});
 
-server.listen(port, function() {
-    console.log("App is running on port " + port);
-});
+
+app.listen(config.PORT,...);
